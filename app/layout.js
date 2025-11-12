@@ -18,9 +18,9 @@ export default function RootLayout({ children }) {
         The layout components (Header/Sidebar) will be inside DashboardLayout.
       */}
       <body className={inter.className}>
-        <DashboardLayout>
+        {/* <DashboardLayout> */}
           {children}
-        </DashboardLayout>
+        {/* </DashboardLayout> */}
       </body>
     </html>
   )
