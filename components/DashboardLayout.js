@@ -23,6 +23,7 @@ export default function DashboardLayout({ children }) {
       router.push('/login')
       return
     }
+  
 
     const parsedUser = JSON.parse(userStr)
     setUser(parsedUser)

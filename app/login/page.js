@@ -1,5 +1,3 @@
-
-
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -7,18 +5,41 @@ import { useRouter } from 'next/navigation'
 import { LogIn, Hotel, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { signIn } from '@/lib/supabase'
 
+// Loader Component (for clarity and reuse)
+const InitialLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-primary-600"></div>
+    <style jsx>{`
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `}</style>
+  </div>
+);
+
 export default function LoginPage() {
   const router = useRouter()
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false) // For form submission
   const [error, setError] = useState('')
+  // New state to track if initial authentication check is complete
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true) 
 
-  // Redirect if already logged in
+  // Redirect if already logged in or finish check
   useEffect(() => {
+    // This runs only on the client side
     const userStr = localStorage.getItem('hotel_user')
+    
     if (userStr) {
       router.push('/dashboard')
+    } else {
+      // Auth check finished, proceed to show login form
+      setIsCheckingAuth(false)
     }
   }, [router])
 
@@ -51,10 +72,12 @@ export default function LoginPage() {
     }
   }
 
-  // Show nothing while redirecting
-  const userStr = typeof window !== 'undefined' ? localStorage.getItem('hotel_user') : null
-  if (userStr) return null
+  // 1. Show loader while checking initial auth status
+  if (isCheckingAuth) {
+    return <InitialLoader />;
+  }
 
+  // 2. If initial auth check is done and no user found, render the login page
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-secondary-50 p-4 relative overflow-hidden">
       {/* Background Blobs */}
@@ -156,7 +179,7 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin-form" />
                   <span>Signing in...</span>
                 </>
               ) : (
@@ -197,6 +220,13 @@ export default function LoginPage() {
         }
         .animate-shake {
           animation: shake 0.3s ease-in-out;
+        }
+        @keyframes spin-form {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        .animate-spin-form {
+          animation: spin-form 1s linear infinite;
         }
       `}</style>
     </div>
