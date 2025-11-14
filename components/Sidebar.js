@@ -308,6 +308,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   Calendar,
@@ -354,6 +355,7 @@ import {
 } from 'lucide-react'
 
 export default function Sidebar({ isOpen, setIsOpen, activeItem, setActiveItem }) {
+  const router = useRouter()
   const [expandedMenus, setExpandedMenus] = useState({})
 
   const toggleMenu = (menuId) => {
@@ -497,6 +499,7 @@ export default function Sidebar({ isOpen, setIsOpen, activeItem, setActiveItem }
       toggleMenu(item.id)
     } else {
       setActiveItem(item.id)
+      router.push(item.path)
       if (window.innerWidth < 1024) {
         setIsOpen(false)
       }
@@ -505,6 +508,7 @@ export default function Sidebar({ isOpen, setIsOpen, activeItem, setActiveItem }
 
   const handleSubItemClick = (parentId, subItem) => {
     setActiveItem(subItem.id)
+    router.push(subItem.path)
     if (window.innerWidth < 1024) {
       setIsOpen(false)
     }
