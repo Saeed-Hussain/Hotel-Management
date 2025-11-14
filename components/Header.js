@@ -200,7 +200,7 @@ export default function Header({ isOpen, setIsOpen }) {
                 <p className="text-sm font-semibold text-gray-900">
                   {user?.full_name || 'User'}
                 </p>
-                <p className="text-xs text-gray-500 capitalize">{user?.role || 'Admin'}</p>
+                <p className="text-xs text-blue-500 capitalize">{user?.role || 'Admin'}</p>
               </div>
               <ChevronDown className={`hidden lg:block w-4 h-4 text-gray-500 transition-transform ${
                 showProfileMenu ? 'rotate-180' : ''

@@ -79,9 +79,10 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Plus, Edit2, Trash2, Eye, Search, X, Upload, Check } from 'lucide-react';
 import DashboardLayout from '@/components/DashboardLayout';
+import { motion } from 'framer-motion';
 
 // Import Supabase client from lib
-import { supabase } from '@/lib/supabase';  // <-- ADDED THIS LINE
+import { supabase } from '@/lib/supabase';
 
 // Main Amenities Page Component
 const AmenitiesManagement = () => {
@@ -152,58 +153,63 @@ const AmenitiesManagement = () => {
     <DashboardLayout>
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white border-b border-gray-200 px-8 py-6"
+      >
         <div className="flex items-center justify-between">
           <div>
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-              
-            </div>
             <h1 className="text-3xl font-bold text-gray-900">Amenities List</h1>
-            <span className="hover:text-teal-600 cursor-pointer">Manage Your Amenities.</span>
-         
+            <p className="text-gray-500 mt-1">Manage Your Amenities</p>
           </div>
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-blue-500 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <Plus size={20} />
-            Add
+            Add Amenity
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <div className="px-8 py-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-xl shadow-sm border border-gray-200"
+        >
           {/* Controls */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">Show</span>
+                <span className="text-sm text-gray-700 font-medium">Show</span>
                 <select
                   value={entriesPerPage}
                   onChange={(e) => {
                     setEntriesPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                  className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value={5}>5</option>
                   <option value={10}>10</option>
                   <option value={25}>25</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-sm text-gray-700">entries</span>
+                <span className="text-sm text-gray-700 font-medium">entries</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">Search:</span>
+                <span className="text-sm text-gray-700 font-medium">Search:</span>
                 <div className="relative">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 w-64"
+                    className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
                     placeholder="Search amenities..."
                   />
                   {searchTerm && (
@@ -221,49 +227,52 @@ const AmenitiesManagement = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">#</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Active</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">#</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-100">
                 {loading ? (
                   <tr>
-                    <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
-                      Loading amenities...
+                    <td colSpan="4" className="px-6 py-16 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                        <p className="text-gray-500 font-medium">Loading amenities...</p>
+                      </div>
                     </td>
                   </tr>
                 ) : currentEntries.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
-                      No amenities found
+                    <td colSpan="4" className="px-6 py-12 text-center">
+                      <p className="text-gray-500 font-medium">No amenities found</p>
                     </td>
                   </tr>
                 ) : (
                   currentEntries.map((amenity, index) => (
-                    <tr key={amenity.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm text-gray-900">
+                    <tr key={amenity.id} className="hover:bg-blue-50 transition-all duration-200">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">
                         {indexOfFirstEntry + index + 1}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">{amenity.name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          amenity.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{amenity.name}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          amenity.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                         }`}>
                           {amenity.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm">
-                        <div className="flex items-center gap-2">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
                           <button
                             onClick={() => {
                               setSelectedAmenity(amenity);
                               setShowViewModal(true);
                             }}
-                            className="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                            className="flex items-center gap-1.5 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                           >
                             <Eye size={14} />
                             View
@@ -273,14 +282,14 @@ const AmenitiesManagement = () => {
                               setSelectedAmenity(amenity);
                               setShowEditModal(true);
                             }}
-                            className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                            className="flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                           >
                             <Edit2 size={14} />
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(amenity.id)}
-                            className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs font-medium transition-colors"
+                            className="flex items-center gap-1.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
                           >
                             <Trash2 size={14} />
                             Delete
@@ -295,15 +304,15 @@ const AmenitiesManagement = () => {
           </div>
 
           {/* Pagination */}
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <div className="text-sm text-gray-700">
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50">
+            <div className="text-sm text-gray-700 font-medium">
               Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredAmenities.length)} of {filteredAmenities.length} entries
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Previous
               </button>
@@ -311,10 +320,10 @@ const AmenitiesManagement = () => {
                 <button
                   key={i + 1}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`px-4 py-2 border rounded text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 border rounded-lg text-sm font-semibold transition-all ${
                     currentPage === i + 1
-                      ? 'bg-blue-500 text-white border-teal-600'
-                      : 'border-blue-500 text-blue-500 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-md'
+                      : 'border-gray-300 text-gray-700 hover:bg-white hover:border-blue-500'
                   }`}
                 >
                   {i + 1}
@@ -323,13 +332,13 @@ const AmenitiesManagement = () => {
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 Next
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Modals */}
@@ -417,16 +426,17 @@ const AddAmenityModal = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-blue-500 px-6 py-4 flex items-center justify-between rounded-t-lg">
-          <h2 className="text-xl font-bold text-white">Add New Amenity</h2>
-          <button onClick={onClose} className="text-white hover:text-gray-200">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[calc(100vh-4rem)] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 flex-shrink-0">
+          <h2 className="text-2xl font-bold text-gray-900">Add New Amenity</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="p-6">
           <div className="space-y-5">
             {/* Name Field */}
             <div>
@@ -489,27 +499,28 @@ const AddAmenityModal = ({ onClose, onSuccess }) => {
                 id="is_active"
                 checked={formData.is_active}
                 onChange={(e) => setFormData(prev => ({ ...prev, is_active: e.target.checked }))}
-                className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
               />
               <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
                 Active
               </label>
             </div>
           </div>
+          </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 flex-shrink-0 bg-gray-50">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-2.5 border border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-100 transition-all duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="px-6 py-2.5 bg-blue-500 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {uploading ? 'Saving...' : 'Save Amenity'}
             </button>
@@ -579,16 +590,17 @@ const EditAmenityModal = ({ amenity, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-blue-600 px-6 py-4 flex items-center justify-between rounded-t-lg">
-          <h2 className="text-xl font-bold text-white">Edit Amenity</h2>
-          <button onClick={onClose} className="text-white hover:text-gray-200">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[calc(100vh-4rem)] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 flex-shrink-0">
+          <h2 className="text-2xl font-bold text-gray-900">Edit Amenity</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={24} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
+          <div className="p-6">
           <div className="space-y-5">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -654,19 +666,20 @@ const EditAmenityModal = ({ amenity, onClose, onSuccess }) => {
               </label>
             </div>
           </div>
+          </div>
 
-          <div className="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 flex-shrink-0 bg-gray-50">
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              className="px-6 py-2.5 border border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-100 transition-all duration-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {uploading ? 'Updating...' : 'Update Amenity'}
             </button>
@@ -680,55 +693,55 @@ const EditAmenityModal = ({ amenity, onClose, onSuccess }) => {
 // View Amenity Modal Component
 const ViewAmenityModal = ({ amenity, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="bg-gray-600 px-6 py-4 flex items-center justify-between rounded-t-lg">
-          <h2 className="text-xl font-bold text-white">View Amenity</h2>
-          <button onClick={onClose} className="text-white hover:text-gray-200">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 max-h-[calc(100vh-4rem)] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 flex-shrink-0">
+          <h2 className="text-2xl font-bold text-gray-900">View Amenity</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
             <X size={24} />
           </button>
         </div>
 
-        <div className="p-6">
-          <div className="space-y-5">
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="space-y-6">
             {amenity.image && (
               <div className="flex justify-center">
                 <img
                   src={amenity.image}
                   alt={amenity.name}
-                  className="w-48 h-48 object-cover rounded-lg shadow-md"
+                  className="w-64 h-64 object-cover rounded-xl shadow-lg"
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Name</label>
-              <p className="text-gray-900 text-lg">{amenity.name}</p>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Name</label>
+              <p className="text-gray-900 text-lg font-medium">{amenity.name}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
-              <p className="text-gray-900">{amenity.description || 'No description provided'}</p>
+              <label className="block text-sm font-bold text-gray-700 mb-2">Description</label>
+              <p className="text-gray-700 leading-relaxed">{amenity.description || 'No description provided'}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Status</label>
-              <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${
-                amenity.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              <label className="block text-sm font-bold text-gray-700 mb-2">Status</label>
+              <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${
+                amenity.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
               }`}>
                 {amenity.is_active ? 'Active' : 'Inactive'}
               </span>
             </div>
           </div>
+        </div>
 
-          <div className="flex justify-end mt-6 pt-6 border-t border-gray-200">
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-            >
-              Close
-            </button>
-          </div>
+        <div className="flex justify-end px-6 py-4 border-t border-gray-200 flex-shrink-0 bg-gray-50">
+          <button
+            onClick={onClose}
+            className="px-6 py-2.5 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
